@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { Heading, Flex, Divider, Text } from '@chakra-ui/react'
 import { getAllPosts } from '../../services/apiConfig'
 import PostCard from '../../components/PostCard'
-import { withAITracking } from '@microsoft/applicationinsights-react-js'
-import { reactPlugin } from '../../services/insightsConfig'
 import { datadogRum } from '@datadog/browser-rum';
 function ListPosts() {
   const [listPosts, setListPosts] = useState([])
@@ -49,5 +47,4 @@ function ListPosts() {
   )
 }
 
-// export default ListPosts
-export default withAITracking(reactPlugin, ListPosts, 'ListPosts')
+export default ListPosts

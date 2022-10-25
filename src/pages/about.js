@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react'
 import { Grid, GridItem, Heading, VStack, Divider } from '@chakra-ui/react'
-import { withAITracking } from '@microsoft/applicationinsights-react-js'
-import { reactPlugin } from '../services/insightsConfig'
 import { datadogRum } from '@datadog/browser-rum';
 function About() {
 
@@ -63,5 +61,4 @@ function About() {
   )
 }
 
-// export default About
-export default withAITracking(reactPlugin, About, 'About')
+export default About

@@ -10,8 +10,6 @@ import {
   SimpleGrid,
   Divider
 } from '@chakra-ui/react'
-import { withAITracking } from '@microsoft/applicationinsights-react-js'
-import { reactPlugin } from '../services/insightsConfig'
 import { datadogRum } from '@datadog/browser-rum';
 function Contact() {
 
@@ -65,5 +63,4 @@ function Contact() {
   )
 }
 
-// export default Contact
-export default withAITracking(reactPlugin, Contact, 'Contact')
+export default Contact

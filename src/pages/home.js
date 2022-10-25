@@ -2,8 +2,6 @@ import React, { useEffect } from 'react'
 import { Badge, Heading, Highlight, List, ListIcon, ListItem, Text, Divider } from '@chakra-ui/react'
 import { StarIcon } from '@chakra-ui/icons'
 import { Link } from 'react-router-dom'
-import { withAITracking } from '@microsoft/applicationinsights-react-js'
-import { reactPlugin } from '../services/insightsConfig'
 
 function Home() {
   // const [initialized, setInitialized] = useState()
@@ -106,5 +104,4 @@ function Home() {
   )
 }
 
-// export default Home
-export default (withAITracking(reactPlugin, Home, 'Home'))
+export default Home
