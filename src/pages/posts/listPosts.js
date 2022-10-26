@@ -12,7 +12,6 @@ function ListPosts() {
 
   useEffect(() => {
     getAllPosts().then(res => {
-      console.log('res all posts nè: ', res)
       setListPosts(res)
     })
       .catch(error => {

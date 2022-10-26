@@ -15,7 +15,10 @@ export const getPostDetails = async (id) => {
 }
 
 // Add new post
-
+export const addPost = async (post) => {
+  const { data } = await axios.post('http://20.78.92.240:3000/blogs', post)
+  return data
+}
 // Update a post
 
 // Delete a post

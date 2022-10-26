@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { AddIcon } from '@chakra-ui/icons'
+import { addPost } from '../../services/apiConfig'
 import {
   Heading,
   FormControl,
@@ -10,14 +11,16 @@ import {
   Input,
   Button,
   HStack,
-  Divider
+  Divider, InputGroup, InputLeftAddon, useToast
 } from '@chakra-ui/react'
+
 import { datadogRum } from '@datadog/browser-rum';
 function PostForm() {
+  const toast = useToast()
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [country, setCountry] = useState('')
-  const [views, setViews] = useState('')
+  const [url, setUrl] = useState('')
 
   useEffect(() => {
     datadogRum.startView({
@@ -38,11 +41,11 @@ function PostForm() {
     setCountry(e.target.value)
   }
 
-  const handleInputViewsChange = (e) => {
-    setViews(e.target.value)
-  }
+  const isNameInputError = name === '';
+  const isDesInputError = description === '';
+  const isCountryInputError = country === '';
 
-  const isError = name === '' || description === '' || country === ''
+  const isError = isNameInputError || isDesInputError || isCountryInputError
 
 
   const { getInputProps, getIncrementButtonProps, getDecrementButtonProps } =
@@ -54,6 +57,38 @@ function PostForm() {
       precision: 2,
     })
 
+  const handleImageUrlBlur = (e) => {
+    setUrl(e.target.value)
+  }
+  const refreshInput = () => {
+    setName('')
+    setDescription('')
+    setCountry('')
+    setUrl('')
+  }
+
+  const handleSubmitAdd = () => {
+    const blog = {
+      "name": name,
+      "description": description,
+      "country": country,
+      "views": parseInt(input.value),
+      "images_url": `https://${url}`
+    }
+    addPost(blog).then(res => {
+      refreshInput()
+      toast({
+        title: 'Added',
+        description: "This post is added in system",
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+      })
+    }).catch(error => {
+      console.log('Opps! Errpr :<', error);
+    })
+
+  }
   const inc = getIncrementButtonProps()
   const dec = getDecrementButtonProps()
   const input = getInputProps()
@@ -65,43 +100,51 @@ function PostForm() {
         {window?.location?.pathname?.includes('edit') ? 'Edit A Blog' : 'Add New Blog'}
       </Heading>
       <Divider marginBottom={10} />
-      <FormControl isInvalid={isError}>
-        <FormLabel>Name</FormLabel>
-        <Input type='text' value={name} onChange={handleInputNameChange} />
-        {!isError && (
-          <FormErrorMessage>Name is required.</FormErrorMessage>
-        )}
+      <form>
+        <FormControl isRequired isInvalid={isError}>
+          <FormLabel>Name</FormLabel>
+          <Input type='text' value={name} onChange={handleInputNameChange} />
+          {!isNameInputError ? "" : (
+            <FormErrorMessage>Name is required.</FormErrorMessage>
+          )}
 
-        <FormLabel>Description</FormLabel>
-        <Input type='text' value={description} onChange={handleInputDescriptionChange} />
-        {!isError ? (
-          <FormHelperText>
-            Enter the email you'd like to receive the newsletter on.
-          </FormHelperText>
-        ) : (
-          <FormErrorMessage>Email is required.</FormErrorMessage>
-        )}
+          <FormLabel>Description</FormLabel>
+          <Input type='text' required value={description} onChange={handleInputDescriptionChange} />
+          {!isDesInputError ? "" : (
+            <FormErrorMessage>Description is required.</FormErrorMessage>
+          )}
 
-        <FormLabel>Country</FormLabel>
-        <Input type='text' value={country} onChange={handleInputCountryChange} />
-        {!isError ? (
-          <FormHelperText>
-            Enter the email you'd like to receive the newsletter on.
-          </FormHelperText>
-        ) : (
-          <FormErrorMessage>Email is required.</FormErrorMessage>
-        )}
+          <FormLabel>Country</FormLabel>
+          <Input type='text' required value={country} onChange={handleInputCountryChange} />
+          {!isCountryInputError ? (
+            ""
+          ) : (
+            <FormErrorMessage>Country is required.</FormErrorMessage>
+          )}
+        </FormControl>
+        <FormLabel>Image Url</FormLabel>
+        <InputGroup size='sm'>
+          <InputLeftAddon children='https://' />
+          <Input onChange={handleImageUrlBlur} placeholder='my-site/my-image.jpg' />
+        </InputGroup>
 
         <FormLabel>Views</FormLabel>
         <HStack maxW='320px'>
           <Button {...inc}>+</Button>
-          <Input {...input} />
+          <Input  {...input} />
           <Button {...dec}>-</Button>
         </HStack>
-        <Button pos="absolute" bottom="0" right="0" leftIcon={<AddIcon />} data-custom-name="Add button" colorScheme='teal' marginTop={10} variant='solid'>
+        <Button
+          bottom="0" right="0"
+          leftIcon={<AddIcon />}
+          data-custom-name="Add button"
+          colorScheme='teal'
+          marginTop={10}
+          variant='solid'
+          onClick={handleSubmitAdd}>
           Add
         </Button>
-      </FormControl>
+      </form>
     </>
   )
 }
